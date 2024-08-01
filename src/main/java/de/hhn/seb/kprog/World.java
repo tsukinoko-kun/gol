@@ -25,6 +25,7 @@ public class World {
                 this.cells.set(i, random.nextBoolean());
             }
         }
+        this.nextCells.or(this.cells);
     }
 
     /**
@@ -35,6 +36,7 @@ public class World {
             for (int x = 0; x < this.size; x++) {
                 int i = y * this.size + x;
                 this.cells.set(i, state[y][x]);
+                this.nextCells.set(i, state[y][x]);
             }
         }
     }
