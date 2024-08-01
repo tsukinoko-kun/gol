@@ -16,6 +16,12 @@ public class RulesBenchmark {
     public void setup() {
         World world = new World(this.n);
         this.rules = new Rules(world);
+
+        this.rules.tick();
+        this.rules.tick();
+        this.rules.tick();
+        this.rules.tick();
+        this.rules.tick();
     }
 
     @Benchmark
@@ -25,10 +31,6 @@ public class RulesBenchmark {
     @Measurement(iterations = 5, time = 2)
     @Fork(value = 2)
     public void tick() {
-        this.rules.tick();
-        this.rules.tick();
-        this.rules.tick();
-        this.rules.tick();
         this.rules.tick();
     }
 }
