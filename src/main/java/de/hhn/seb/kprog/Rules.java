@@ -32,12 +32,12 @@ public class Rules {
     private int countAliveNeighbours(int x, int y) {
         int count = 0;
         for (int deltaX = -1; deltaX <= 1; deltaX++) {
+            int neighbourX = ((x + deltaX) + this.size) & this.sizeMinusOne;
             for (int deltaY = -1; deltaY <= 1; deltaY++) {
                 if (deltaX == 0 && deltaY == 0) {
                     continue;
                 }
 
-                int neighbourX = ((x + deltaX) + this.size) & this.sizeMinusOne;
                 int neighbourY = ((y + deltaY) + this.size) & this.sizeMinusOne;
                 if (this.world.isAlive(neighbourX, neighbourY)) {
                     count++;
