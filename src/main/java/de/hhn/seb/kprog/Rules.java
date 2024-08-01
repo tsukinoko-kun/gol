@@ -19,10 +19,14 @@ public class Rules {
             for (int x = 0; x < this.size; x++) {
                 boolean isAlive = this.world.isAlive(x, y);
                 int aliveNeighbours = this.countAliveNeighbours(x, y);
-                if (isAlive && (aliveNeighbours < 2 || aliveNeighbours > 3)) {
-                    this.world.setAlive(x, y, false);
-                } else if (!isAlive && aliveNeighbours == 3) {
-                    this.world.setAlive(x, y, true);
+                if (isAlive) {
+                    if (aliveNeighbours < 2 || aliveNeighbours > 3) {
+                        this.world.setAlive(x, y, false);
+                    }
+                } else {
+                    if (aliveNeighbours == 3) {
+                        this.world.setAlive(x, y, true);
+                    }
                 }
             }
         }
@@ -32,8 +36,8 @@ public class Rules {
     private int countAliveNeighbours(int x, int y) {
         int count = 0;
 
-        int neighbourXMinusOne = ((x + -1) + this.size) & this.sizeMinusOne;
-        int neighbourYMinusOne = ((y + -1) + this.size) & this.sizeMinusOne;
+        int neighbourXMinusOne = ((x -1) + this.size) & this.sizeMinusOne;
+        int neighbourYMinusOne = ((y -1) + this.size) & this.sizeMinusOne;
         int neighbourXPlusOne = (x + 1) & this.sizeMinusOne;
         int neighbourYPlusOne = (y + 1) & this.sizeMinusOne;
 
@@ -60,6 +64,9 @@ public class Rules {
         if (this.world.isAlive(neighbourXMinusOne, y)) {
             count++;
         }
+
+        // 0, 0
+        // Do not count the cell itself.
 
         // +1, 0
         if (this.world.isAlive(neighbourXPlusOne, y)) {
