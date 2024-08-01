@@ -5,14 +5,18 @@ package de.hhn.seb.kprog;
  */
 public class Rules {
     private final World world;
+    private final int size;
+    private final int sizeMinusOne;
 
     public Rules(World world) {
         this.world = world;
+        this.size = world.size;
+        this.sizeMinusOne = this.size - 1;
     }
 
     public void tick() {
-        for (int y = 0; y < this.world.size; y++) {
-            for (int x = 0; x < this.world.size; x++) {
+        for (int y = 0; y < this.size; y++) {
+            for (int x = 0; x < this.size; x++) {
                 boolean isAlive = this.world.isAlive(x, y);
                 int aliveNeighbours = this.countAliveNeighbours(x, y);
                 if (isAlive && (aliveNeighbours < 2 || aliveNeighbours > 3)) {
@@ -33,8 +37,8 @@ public class Rules {
                     continue;
                 }
 
-                int neighbourX = ((x + deltaX) + this.world.size) % this.world.size;
-                int neighbourY = ((y + deltaY) + this.world.size) % this.world.size;
+                int neighbourX = ((x + deltaX) + this.size) & this.sizeMinusOne;
+                int neighbourY = ((y + deltaY) + this.size) & this.sizeMinusOne;
                 if (this.world.isAlive(neighbourX, neighbourY)) {
                     count++;
                 }
