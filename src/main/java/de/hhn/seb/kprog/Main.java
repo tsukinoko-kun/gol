@@ -11,8 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.util.LinkedList;
-
 public class Main extends Application {
     // static values
     public final static int WORLD_SIZE = 512;
@@ -21,7 +19,7 @@ public class Main extends Application {
     // components
     private final World world = new World(Main.WORLD_SIZE);
     private final Rules rules = new Rules(this.world);
-    private final LinkedList<LinkedList<Rectangle>> rectangles = new LinkedList<>();
+    private final Rectangle[] rectangles = new Rectangle[Main.WORLD_SIZE * Main.WORLD_SIZE];
     private final Benchmark benchmark = Benchmark.getInstance();
     private final Label benchmarkLabel = new Label();
 
@@ -41,34 +39,24 @@ public class Main extends Application {
         root.getChildren().add(grid);
 
         for (int y = 0; y < Main.WORLD_SIZE; y++) {
-            LinkedList<Rectangle> row = new LinkedList<>();
             for (int x = 0; x < Main.WORLD_SIZE; x++) {
-                // create a rectangle
-                Rectangle rect = new Rectangle(Main.RECTANGLE_SIZE, Main.RECTANGLE_SIZE);
-                rect.setFill(Color.BLACK);
-                // set the position of the rectangle
-                rect.setX(y * Main.RECTANGLE_SIZE);
-                rect.setY(x * Main.RECTANGLE_SIZE);
-                // add the rectangle to the rectangles row
-                row.add(rect);
+                int i = y * Main.WORLD_SIZE + x;
+                Rectangle rectangle = new Rectangle(Main.RECTANGLE_SIZE, Main.RECTANGLE_SIZE);
+                rectangle.setFill(Color.BLACK);
+                grid.add(rectangle, x, y);
+                this.rectangles[i] = rectangle;
             }
-            // add the row of rectangles to the grid
-            grid.addRow(y, row.toArray(new Rectangle[0]));
-            // add the row to the rectangles list
-            this.rectangles.add(row);
         }
 
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
 
-        Thread thread = new Thread(() -> {
+        // run updateGUI repeatedly in another thread
+        var thread = new Thread(() -> {
             while (true) {
-                // start the benchmark timer
-                this.benchmark.start(); // stopped in updateGUI
-                // calculate next generation
+                this.benchmark.start();
                 this.rules.tick();
-                // update the GUI in the JavaFX thread
                 Platform.runLater(this::updateGUI);
             }
         });
@@ -76,24 +64,14 @@ public class Main extends Application {
         thread.start();
     }
 
-    /**
-     * Apply the state of the world to the GUI.
-     */
     private void updateGUI() {
+        this.benchmarkLabel.setText(this.benchmark.getText());
         for (int y = 0; y < Main.WORLD_SIZE; y++) {
             for (int x = 0; x < Main.WORLD_SIZE; x++) {
-                this.rectangles.get(y).get(x).setFill(
-                        // is cell alive?
-                        world.isAlive(x, y)
-                                // yes: set color to green
-                                ? Color.DARKGREEN
-                                // no: set color to black
-                                : Color.BLACK
-                );
+                int i = y * Main.WORLD_SIZE + x;
+                this.rectangles[i].setFill(this.world.isAlive(x, y) ? Color.DARKGREEN : Color.BLACK);
             }
         }
-        // stop the benchmark timer
         this.benchmark.stop();
-        this.benchmarkLabel.setText(this.benchmark.getText());
     }
 }
