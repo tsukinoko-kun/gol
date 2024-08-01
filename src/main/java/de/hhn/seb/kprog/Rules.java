@@ -31,19 +31,58 @@ public class Rules {
 
     private int countAliveNeighbours(int x, int y) {
         int count = 0;
-        for (int deltaX = -1; deltaX <= 1; deltaX++) {
-            int neighbourX = ((x + deltaX) + this.size) & this.sizeMinusOne;
-            for (int deltaY = -1; deltaY <= 1; deltaY++) {
-                if (deltaX == 0 && deltaY == 0) {
-                    continue;
-                }
 
-                int neighbourY = ((y + deltaY) + this.size) & this.sizeMinusOne;
-                if (this.world.isAlive(neighbourX, neighbourY)) {
-                    count++;
-                }
-            }
+        int neighbourXMinusOne = ((x + -1) + this.size) & this.sizeMinusOne;
+        int neighbourYMinusOne = ((y + -1) + this.size) & this.sizeMinusOne;
+        int neighbourXPlusOne = (x + 1) & this.sizeMinusOne;
+        int neighbourYPlusOne = (y + 1) & this.sizeMinusOne;
+
+        // y = -1
+
+        // -1, -1
+        if (this.world.isAlive(neighbourXMinusOne, neighbourYMinusOne)) {
+            count++;
         }
+
+        // 0, -1
+        if (this.world.isAlive(x, neighbourYMinusOne)) {
+            count++;
+        }
+
+        // +1, -1
+        if (this.world.isAlive(neighbourXPlusOne, neighbourYMinusOne)) {
+            count++;
+        }
+
+        // y = 0
+
+        // -1, 0
+        if (this.world.isAlive(neighbourXMinusOne, y)) {
+            count++;
+        }
+
+        // +1, 0
+        if (this.world.isAlive(neighbourXPlusOne, y)) {
+            count++;
+        }
+
+        // y = +1
+
+        // -1, +1
+        if (this.world.isAlive(neighbourXMinusOne, neighbourYPlusOne)) {
+            count++;
+        }
+
+        // 0, +1
+        if (this.world.isAlive(x, neighbourYPlusOne)) {
+            count++;
+        }
+
+        // +1, +1
+        if (this.world.isAlive(neighbourXPlusOne, neighbourYPlusOne)) {
+            count++;
+        }
+
         return count;
     }
 }
