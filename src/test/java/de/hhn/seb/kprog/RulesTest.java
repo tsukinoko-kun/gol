@@ -17,6 +17,34 @@ class RulesTest {
     }
 
     @Test
+    public void world() {
+        this.world.setState(new boolean[][]{
+                {false, true, false, false, false, false, false, false},
+                {false, false, true, false, false, false, false, false},
+                {true, true, true, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false}
+        });
+
+        this.worldShouldBe(new boolean[][]{
+                {false, true, false, false, false, false, false, false},
+                {false, false, true, false, false, false, false, false},
+                {true, true, true, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false},
+                {false, false, false, false, false, false, false, false}
+        });
+
+        assertFalse(this.world.isAlive(0, 0), "Cell at (0, 0) should be dead");
+        assertTrue(this.world.isAlive(1, 0), "Cell at (1, 0) should be alive");
+    }
+
+    @Test
     public void glider() {
         this.world.setState(new boolean[][]{
                 {false, true, false, false, false, false, false, false},
