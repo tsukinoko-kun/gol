@@ -7,8 +7,6 @@ plugins {
 
 group = 'de.hhn.seb.kprog'
 version = '1.0-SNAPSHOT'
-sourceCompatibility = JavaVersion.VERSION_22
-targetCompatibility = JavaVersion.VERSION_22
 
 repositories {
     mavenCentral()
