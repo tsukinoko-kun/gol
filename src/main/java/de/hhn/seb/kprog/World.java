@@ -16,7 +16,7 @@ public class World {
 
         // initialize a list of cell rows
         this.cells = new LinkedList<>();
-        Random random = new Random();
+        Random random = new Random(0x12345678);
 
         for (int i = 0; i < size; i++) {
             // create a new row
