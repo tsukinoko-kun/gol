@@ -41,7 +41,3 @@ test {
 application {
     mainClass = 'de.hhn.seb.kprog.Main'
 }
-
-tasks.withType(JavaExec).configureEach {
-    jvmArgs = ['-Djmh.blackhole.mode=full']
-}
