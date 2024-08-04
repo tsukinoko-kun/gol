@@ -3,13 +3,11 @@ package de.hhn.seb.kprog;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.*;
 
-import java.util.concurrent.TimeUnit;
-
 @State(Scope.Benchmark)
 public class RulesBenchmark {
     private Rules rules;
 
-    @Param({"16", "32", "64"})
+    @Param({"64", "512"})
     private int n;
 
     @Setup(Level.Trial)
@@ -26,10 +24,9 @@ public class RulesBenchmark {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    @Warmup(iterations = 5, time = 2)
-    @Measurement(iterations = 5, time = 2)
-    @Fork(value = 2)
+    @Warmup(iterations = 5, time = 3)
+    @Measurement(iterations = 5, time = 3)
+    @Fork(value = 3)
     public void tick() {
         this.rules.tick();
     }
