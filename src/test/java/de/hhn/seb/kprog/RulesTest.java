@@ -3,17 +3,14 @@ package de.hhn.seb.kprog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RulesTest {
     private World world;
-    private Rules rules;
 
     @BeforeEach
     public void setUp() {
         this.world = new World(8);
-        this.rules = new Rules(this.world);
     }
 
     @Test
@@ -40,8 +37,7 @@ class RulesTest {
                 {false, false, false, false, false, false, false, false}
         });
 
-        assertFalse(this.world.isAlive(0, 0), "Cell at (0, 0) should be dead");
-        assertTrue(this.world.isAlive(1, 0), "Cell at (1, 0) should be alive");
+        assertEquals(1, this.world.getAliveNeighbours(3, 3));
     }
 
     @Test
@@ -57,7 +53,7 @@ class RulesTest {
                 {false, false, false, false, false, false, false, false}
         });
 
-        this.rules.tick();
+        this.world.tick();
 
         this.worldShouldBe(new boolean[][]{
                 {false, false, false, false, false, false, false, false},
@@ -70,7 +66,7 @@ class RulesTest {
                 {false, false, false, false, false, false, false, false}
         });
 
-        this.rules.tick();
+        this.world.tick();
 
         this.worldShouldBe(new boolean[][]{
                 {false, false, false, false, false, false, false, false},
@@ -83,7 +79,7 @@ class RulesTest {
                 {false, false, false, false, false, false, false, false}
         });
 
-        this.rules.tick();
+        this.world.tick();
 
         this.worldShouldBe(new boolean[][]{
                 {false, false, false, false, false, false, false, false},
@@ -110,7 +106,7 @@ class RulesTest {
                 {false, false, false, false, false, true, true, true},
         });
 
-        this.rules.tick();
+        this.world.tick();
 
         this.worldShouldBe(new boolean[][]{
                 {false, false, false, false, false, false, true, false},
@@ -123,7 +119,7 @@ class RulesTest {
                 {false, false, false, false, false, false, true, true},
         });
 
-        this.rules.tick();
+        this.world.tick();
 
         this.worldShouldBe(new boolean[][]{
                 {false, false, false, false, false, false, true, true},
@@ -136,7 +132,7 @@ class RulesTest {
                 {false, false, false, false, false, true, false, true},
         });
 
-        this.rules.tick();
+        this.world.tick();
 
         this.worldShouldBe(new boolean[][]{
                 {false, false, false, false, false, false, true, true},

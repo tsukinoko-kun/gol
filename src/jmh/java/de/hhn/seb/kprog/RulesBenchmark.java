@@ -5,21 +5,20 @@ import org.openjdk.jmh.annotations.*;
 
 @State(Scope.Benchmark)
 public class RulesBenchmark {
-    private Rules rules;
+    private World world;
 
     @Param({"64", "512"})
     private int n;
 
     @Setup(Level.Trial)
     public void setup() {
-        World world = new World(this.n);
-        this.rules = new Rules(world);
+        this.world = new World(this.n);
 
-        this.rules.tick();
-        this.rules.tick();
-        this.rules.tick();
-        this.rules.tick();
-        this.rules.tick();
+        this.world.tick();
+        this.world.tick();
+        this.world.tick();
+        this.world.tick();
+        this.world.tick();
     }
 
     @Benchmark
@@ -28,6 +27,6 @@ public class RulesBenchmark {
     @Measurement(iterations = 5, time = 3)
     @Fork(value = 3)
     public void tick() {
-        this.rules.tick();
+        this.world.tick();
     }
 }

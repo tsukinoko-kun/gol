@@ -20,17 +20,19 @@ public class Main extends Application {
     private final static int DISPLAY_SIZE = WORLD_SIZE * RECTANGLE_SIZE;
 
     // components
-    private final World world = new World(Main.WORLD_SIZE);
-    private final Rules rules = new Rules(this.world);
-    private final Canvas canvas = new Canvas(Main.WORLD_SIZE*Main.RECTANGLE_SIZE, Main.WORLD_SIZE*Main.RECTANGLE_SIZE);
+    private final Canvas canvas = new Canvas(Main.WORLD_SIZE * Main.RECTANGLE_SIZE, Main.WORLD_SIZE * Main.RECTANGLE_SIZE);
     private final GraphicsContext gc = canvas.getGraphicsContext2D();
     private final WritableImage buffer = new WritableImage(Main.WORLD_SIZE, Main.WORLD_SIZE);
     private final PixelWriter pixelWriter = buffer.getPixelWriter();
+    private final World world = new World(Main.WORLD_SIZE, this::drawAlive, this::drawDead);
     private final Benchmark benchmark = Benchmark.getInstance();
     private final Label benchmarkLabel = new Label();
 
     public Main() {
         this.gc.setImageSmoothing(false);
+        // draw full black screen
+        this.gc.setFill(Color.BLACK);
+        this.gc.fillRect(0, 0, Main.DISPLAY_SIZE, Main.DISPLAY_SIZE);
     }
 
     public static void main(String[] args) {
@@ -55,7 +57,7 @@ public class Main extends Application {
         var thread = new Thread(() -> {
             while (true) {
                 this.benchmark.start();
-                this.rules.tick();
+                this.world.tick();
                 Platform.runLater(this::updateGUI);
             }
         });
@@ -63,14 +65,17 @@ public class Main extends Application {
         thread.start();
     }
 
+    private void drawAlive(int x, int y) {
+        this.pixelWriter.setColor(x, y, Color.DARKGREEN);
+    }
+
+    private void drawDead(int x, int y) {
+        this.pixelWriter.setColor(x, y, Color.BLACK);
+    }
+
     private void updateGUI() {
-        this.benchmarkLabel.setText(this.benchmark.getText());
-        for (int y = 0; y < Main.WORLD_SIZE; y++) {
-            for (int x = 0; x < Main.WORLD_SIZE; x++) {
-                this.pixelWriter.setColor(x, y, this.world.isAlive(x, y) ? Color.DARKGREEN : Color.BLACK);
-            }
-        }
         this.gc.drawImage(this.buffer, 0, 0, Main.DISPLAY_SIZE, Main.DISPLAY_SIZE);
         this.benchmark.stop();
+        this.benchmarkLabel.setText(this.benchmark.getText());
     }
 }
