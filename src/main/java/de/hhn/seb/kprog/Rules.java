@@ -1,13 +1,15 @@
 package de.hhn.seb.kprog;
 
-public class Rules implements IRules {
+/**
+ * The rules of the game of life.
+ */
+public class Rules {
     private final World world;
 
     public Rules(World world) {
         this.world = world;
     }
 
-    @Override
     public void tick() {
         for (int y = 0; y < this.world.size; y++) {
             for (int x = 0; x < this.world.size; x++) {

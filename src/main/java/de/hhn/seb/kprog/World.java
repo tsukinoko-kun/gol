@@ -9,6 +9,7 @@ import java.util.Random;
  */
 public class World {
     public final int size;
+    // 2d list of cells
     private final List<List<Cell>> cells;
 
     public World(int size) {
@@ -65,6 +66,9 @@ public class World {
     }
 
 
+    /**
+     * One cell.
+     */
     private static class Cell {
         private boolean alive;
         private boolean nextAlive;

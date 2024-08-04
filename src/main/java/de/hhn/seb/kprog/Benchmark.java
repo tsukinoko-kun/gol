@@ -4,21 +4,24 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.Semaphore;
 
+/**
+ * Measure the performance of the running application.
+ * Don't change this class.
+ */
 public class Benchmark {
     public static final int MEASUREMENTS = 10;
     private final static Benchmark INSTANCE = new Benchmark();
     private final long[] times = new long[MEASUREMENTS];
     private final Semaphore mutex = new Semaphore(1);
-    private String text;
+    private String text = "Collecting measurements...";
     private int i = 0;
     private Instant start;
 
     private Benchmark() {
-        this.text = "Collecting measurements...";
     }
 
     public static Benchmark getInstance() {
-        return INSTANCE;
+        return Benchmark.INSTANCE;
     }
 
     public void start() {

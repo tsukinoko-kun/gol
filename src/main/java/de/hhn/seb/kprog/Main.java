@@ -62,11 +62,13 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.show();
 
-        // run updateGUI repeatedly in another thread
-        var thread = new Thread(() -> {
+        Thread thread = new Thread(() -> {
             while (true) {
-                this.benchmark.start();
+                // start the benchmark timer
+                this.benchmark.start(); // stopped in updateGUI
+                // calculate next generation
                 this.rules.tick();
+                // update the GUI in the JavaFX thread
                 Platform.runLater(this::updateGUI);
             }
         });
@@ -74,13 +76,24 @@ public class Main extends Application {
         thread.start();
     }
 
+    /**
+     * Apply the state of the world to the GUI.
+     */
     private void updateGUI() {
-        this.benchmarkLabel.setText(this.benchmark.getText());
         for (int y = 0; y < Main.WORLD_SIZE; y++) {
             for (int x = 0; x < Main.WORLD_SIZE; x++) {
-                this.rectangles.get(y).get(x).setFill(world.isAlive(x, y) ? Color.DARKGREEN : Color.BLACK);
+                this.rectangles.get(y).get(x).setFill(
+                        // is cell alive?
+                        world.isAlive(x, y)
+                                // yes: set color to green
+                                ? Color.DARKGREEN
+                                // no: set color to black
+                                : Color.BLACK
+                );
             }
         }
+        // stop the benchmark timer
         this.benchmark.stop();
+        this.benchmarkLabel.setText(this.benchmark.getText());
     }
 }
