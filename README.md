@@ -56,5 +56,5 @@ um das Game of Life zu optimieren. Die Regeln des Game of Life dürfen nicht ver
 
 ## Hinweise
 
-- Denke an die vorgestellten Techniken im Kurs: https://tsukinoko-kun.github.io/hhn-performance/runtime/
+- Denke an die vorgestellten Techniken im Kurs: https://tsukinoko-kun.github.io/hhn-performance/
 - Multi-Threading ist möglich, jedoch nicht empfohlen.
