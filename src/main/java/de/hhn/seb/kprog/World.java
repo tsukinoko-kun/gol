@@ -6,7 +6,7 @@ import java.util.Random;
 /**
  * The world contains all cells.
  */
-public class World implements IRules {
+public class World {
     public final int size;
     public final int length;
     private final char[] cells;
@@ -179,7 +179,6 @@ public class World implements IRules {
         System.arraycopy(this.cells, 0, this.oldCells, 0, this.length);
     }
 
-    @Override
     public void tick() {
         int aliveNeighbours;
 
