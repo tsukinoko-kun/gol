@@ -16,7 +16,7 @@ import java.util.LinkedList;
 public class Main extends Application {
     // static values
     public final static int WORLD_SIZE = 512;
-    private final static int RECTANGLE_SIZE = 2;
+    private final static int RECTANGLE_SIZE = 1;
 
     // components
     private final World world = new World(Main.WORLD_SIZE);
