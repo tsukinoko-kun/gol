@@ -4,26 +4,36 @@ package de.hhn.seb.kprog;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import java.util.LinkedList;
 
 public class Main extends Application {
     // static values
     public final static int WORLD_SIZE = 512;
     private final static int RECTANGLE_SIZE = 1;
+    private final static int DISPLAY_SIZE = WORLD_SIZE * RECTANGLE_SIZE;
 
     // components
-    private final World world = new World(Main.WORLD_SIZE);
-    private final Rules rules = new Rules(this.world);
-    private final LinkedList<LinkedList<Rectangle>> rectangles = new LinkedList<>();
+    private final Canvas canvas = new Canvas(Main.WORLD_SIZE * Main.RECTANGLE_SIZE, Main.WORLD_SIZE * Main.RECTANGLE_SIZE);
+    private final GraphicsContext gc = canvas.getGraphicsContext2D();
+    private final WritableImage buffer = new WritableImage(Main.WORLD_SIZE, Main.WORLD_SIZE);
+    private final PixelWriter pixelWriter = buffer.getPixelWriter();
+    private final World world = new World(Main.WORLD_SIZE, this::drawAlive, this::drawDead);
     private final Benchmark benchmark = Benchmark.getInstance();
     private final Label benchmarkLabel = new Label();
+
+    public Main() {
+        this.gc.setImageSmoothing(false);
+        // draw full black screen
+        this.gc.setFill(Color.BLACK);
+        this.gc.fillRect(0, 0, Main.DISPLAY_SIZE, Main.DISPLAY_SIZE);
+    }
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -34,41 +44,20 @@ public class Main extends Application {
         primaryStage.setTitle("Game of Life");
         VBox root = new VBox();
         root.getChildren().add(benchmarkLabel);
+        root.getChildren().add(this.canvas);
         int sceneSize = Main.WORLD_SIZE * Main.RECTANGLE_SIZE;
         Scene scene = new Scene(root, sceneSize, sceneSize + 50);
 
-        GridPane grid = new GridPane();
-        root.getChildren().add(grid);
-
-        for (int y = 0; y < Main.WORLD_SIZE; y++) {
-            LinkedList<Rectangle> row = new LinkedList<>();
-            for (int x = 0; x < Main.WORLD_SIZE; x++) {
-                // create a rectangle
-                Rectangle rect = new Rectangle(Main.RECTANGLE_SIZE, Main.RECTANGLE_SIZE);
-                rect.setFill(Color.BLACK);
-                // set the position of the rectangle
-                rect.setX(y * Main.RECTANGLE_SIZE);
-                rect.setY(x * Main.RECTANGLE_SIZE);
-                // add the rectangle to the rectangles row
-                row.add(rect);
-            }
-            // add the row of rectangles to the grid
-            grid.addRow(y, row.toArray(new Rectangle[0]));
-            // add the row to the rectangles list
-            this.rectangles.add(row);
-        }
 
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
 
-        Thread thread = new Thread(() -> {
+        // run updateGUI repeatedly in another thread
+        var thread = new Thread(() -> {
             while (true) {
-                // start the benchmark timer
-                this.benchmark.start(); // stopped in updateGUI
-                // calculate next generation
-                this.rules.tick();
-                // update the GUI in the JavaFX thread
+                this.benchmark.start();
+                this.world.tick();
                 Platform.runLater(this::updateGUI);
             }
         });
@@ -76,23 +65,16 @@ public class Main extends Application {
         thread.start();
     }
 
-    /**
-     * Apply the state of the world to the GUI.
-     */
+    private void drawAlive(int x, int y) {
+        this.pixelWriter.setColor(x, y, Color.DARKGREEN);
+    }
+
+    private void drawDead(int x, int y) {
+        this.pixelWriter.setColor(x, y, Color.BLACK);
+    }
+
     private void updateGUI() {
-        for (int y = 0; y < Main.WORLD_SIZE; y++) {
-            for (int x = 0; x < Main.WORLD_SIZE; x++) {
-                this.rectangles.get(y).get(x).setFill(
-                        // is cell alive?
-                        world.isAlive(x, y)
-                                // yes: set color to green
-                                ? Color.DARKGREEN
-                                // no: set color to black
-                                : Color.BLACK
-                );
-            }
-        }
-        // stop the benchmark timer
+        this.gc.drawImage(this.buffer, 0, 0, Main.DISPLAY_SIZE, Main.DISPLAY_SIZE);
         this.benchmark.stop();
         this.benchmarkLabel.setText(this.benchmark.getText());
     }
